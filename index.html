@@ -1,7 +1,77 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Leonel's Website WIP</title>
-<header>I don't honestly know what I'll use this for.</header>
-<body>And yes, I am aware that this place looks like a potato. Please don't judge, I don't know CSS so I can't make fancy styles, and I don't know JS either. I just started coding like a month ago, and that was Python.</body
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Pac-Man</title>
 <style>
+  body {
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: sans-serif;
+  }
+  #game {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: grid;
+    grid-template: repeat(10, 1fr) / repeat(10, 1fr);
+    gap: 2px;
+  }
+  .wall { background: blue; }
+  .dot { background: yellow; border-radius: 50%; }
+  .pacman { background: orange; border-radius: 50%; }
+  .ghost { background: red; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div id="game"></div>
+<script>
+const layout = [
+  1,1,1,1,1,1,1,1,1,1,
+  1,2,2,2,1,2,2,2,2,1,
+  1,2,1,2,2,2,1,2,2,1,
+  1,2,1,1,1,1,1,1,2,1,
+  1,2,2,2,2,2,2,2,2,1,
+  1,2,1,1,1,1,1,1,2,1,
+  1,2,2,2,1,2,2,2,2,1,
+  1,1,1,2,1,2,1,1,1,1,
+  1,2,2,2,2,2,2,2,2,1,
+  1,1,1,1,1,1,1,1,1,1,
+];
+
+const game = document.getElementById('game');
+let squares = [];
+let pacmanIndex = 11;
+
+function createBoard() {
+  layout.forEach((item, i) => {
+    const square = document.createElement('div');
+    if(item === 1) square.classList.add('wall');
+    if(item === 2) square.classList.add('dot');
+    game.appendChild(square);
+    squares.push(square);
+  });
+}
+createBoard();
+squares[pacmanIndex].classList.add('pacman');
+
+document.addEventListener('keydown', movePacman);
+
+function movePacman(e) {
+  squares[pacmanIndex].classList.remove('pacman');
+  if(e.key === 'ArrowUp' && pacmanIndex - 10 >= 0 && !squares[pacmanIndex - 10].classList.contains('wall')) pacmanIndex -= 10;
+  if(e.key === 'ArrowDown' && pacmanIndex + 10 < squares.length && !squares[pacmanIndex + 10].classList.contains('wall')) pacmanIndex += 10;
+  if(e.key === 'ArrowLeft' && pacmanIndex % 10 !== 0 && !squares[pacmanIndex - 1].classList.contains('wall')) pacmanIndex -= 1;
+  if(e.key === 'ArrowRight' && pacmanIndex % 10 !== 9 && !squares[pacmanIndex + 1].classList.contains('wall')) pacmanIndex += 1;
+
+  squares[pacmanIndex].classList.add('pacman');
+  if(squares[pacmanIndex].classList.contains('dot')) squares[pacmanIndex].classList.remove('dot');
+}
+</script>
+</body>
+</html>
