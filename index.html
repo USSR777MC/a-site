@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Pac-Man</title>
+<title>Pac-Man Classic Look</title>
 <style>
   body {
     background: black;
@@ -12,20 +13,65 @@
     align-items: center;
     height: 100vh;
     margin: 0;
-    font-family: sans-serif;
   }
   #game {
-    position: relative;
-    width: 300px;
-    height: 300px;
     display: grid;
-    grid-template: repeat(10, 1fr) / repeat(10, 1fr);
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
     gap: 2px;
   }
-  .wall { background: blue; }
-  .dot { background: yellow; border-radius: 50%; }
-  .pacman { background: orange; border-radius: 50%; }
-  .ghost { background: red; border-radius: 50%; }
+  .wall {
+    background: #0000FF;
+    border-radius: 4px;
+  }
+  .dot {
+    background: yellow;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    margin: auto;
+  }
+  .pacman {
+    width: 28px;
+    height: 28px;
+    background: yellow;
+    border-radius: 50%;
+    position: relative;
+  }
+  /* Pac-Man mouth animation */
+  .pacman::before {
+    content: "";
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background: black;
+    clip-path: polygon(50% 50%, 100% 25%, 100% 75%);
+    animation: chomp 0.3s infinite alternate;
+  }
+  @keyframes chomp {
+    0% { clip-path: polygon(50% 50%, 100% 0%, 100% 100%); }
+    100% { clip-path: polygon(50% 50%, 100% 25%, 100% 75%); }
+  }
+  .ghost {
+    width: 28px;
+    height: 28px;
+    border-radius: 50% 50% 0 0;
+    position: relative;
+  }
+  .ghost::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: inherit;
+    border-radius: 50% 50% 50% 50%;
+  }
+  .red { background: red; }
+  .pink { background: pink; }
+  .cyan { background: cyan; }
+  .orange { background: orange; }
 </style>
 </head>
 <body>
@@ -58,19 +104,25 @@ function createBoard() {
   });
 }
 createBoard();
-squares[pacmanIndex].classList.add('pacman');
+
+function drawPacman() {
+  const pac = document.createElement('div');
+  pac.classList.add('pacman');
+  squares[pacmanIndex].appendChild(pac);
+}
+drawPacman();
 
 document.addEventListener('keydown', movePacman);
 
 function movePacman(e) {
-  squares[pacmanIndex].classList.remove('pacman');
+  squares[pacmanIndex].innerHTML = '';
   if(e.key === 'ArrowUp' && pacmanIndex - 10 >= 0 && !squares[pacmanIndex - 10].classList.contains('wall')) pacmanIndex -= 10;
   if(e.key === 'ArrowDown' && pacmanIndex + 10 < squares.length && !squares[pacmanIndex + 10].classList.contains('wall')) pacmanIndex += 10;
   if(e.key === 'ArrowLeft' && pacmanIndex % 10 !== 0 && !squares[pacmanIndex - 1].classList.contains('wall')) pacmanIndex -= 1;
   if(e.key === 'ArrowRight' && pacmanIndex % 10 !== 9 && !squares[pacmanIndex + 1].classList.contains('wall')) pacmanIndex += 1;
 
-  squares[pacmanIndex].classList.add('pacman');
   if(squares[pacmanIndex].classList.contains('dot')) squares[pacmanIndex].classList.remove('dot');
+  drawPacman();
 }
 </script>
 </body>
